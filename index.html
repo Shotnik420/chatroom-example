@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Czat</title>
+    <style>
+      body {
+        color: rgb(0, 0, 0);
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        display: flex;
+
+        align-items: center;
+        background-color: rgb(201, 201, 201);
+        height: 100vh;
+        flex-direction: column;
+      }
+      h1 {
+        text-align: center;
+        font-size: 5vh;
+        margin-bottom: 2vh;
+        width: 100%;
+        height: 6vh;
+        background-color: rgb(235, 235, 235);
+      }
+      .chat {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 60vw;
+        height: 80vh;
+        background-color: rgb(255, 255, 255);
+        border-radius: 2vh;
+      }
+      #chatWindow {
+        width: 100%;
+        height: 80%;
+        overflow-y: scroll;
+        transition: 0.3s;
+      }
+      .pas {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        height: 20%;
+        background-color: rgb(161, 161, 161);
+      }
+      .autor {
+        font-weight: bold;
+        color: rgb(150, 46, 46);
+        margin-right: 0.5vw;
+      }
+      .wiadomosc {
+        margin: 5px;
+        padding: 5px;
+        background-color: rgba(255, 255, 255, 0);
+      }
+    </style>
+  </head>
+  <body>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script
+      src="https://cdn.socket.io/4.3.2/socket.io.min.js"
+      crossorigin="anonymous"
+    ></script>
+
+    <div class="chat">
+      1
+      <h1>Mechanik Czat</h1>
+      <div id="chatWindow"></div>
+      <div class="pas">
+        <input type="text" id="nickname" placeholder="Enter your nickname" />
+        <input type="text" id="message" placeholder="Enter your message" />
+        <button
+          type="button"
+          id="sendButton"
+          onclick="wyslij(event); return false"
+        >
+          Send
+        </button>
+      </div>
+    </div>
+    <script>
+      const socket = io("http://localhost:3300");
+
+      socket.on("chat update", function (newChat) {
+        var chatWindow = document.getElementById("chatWindow");
+
+        document.getElementById(
+          "chatWindow"
+        ).innerHTML += `<div class='wiadomosc'><p class='text'><span class='autor'>${newChat.nick}</span>${newChat.wiadomosci}</p></div>`;
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+        console.log(newChat);
+      });
+      document.addEventListener("DOMContentLoaded", async function () {
+        var chatWindow = document.getElementById("chatWindow");
+
+        console.log(chatWindow.scrollHeight, "scrollHeight");
+        await axios
+          .get("http://localhost:3300/")
+          .then(function (response) {
+            // handle success
+            const data = response.data;
+
+            data.forEach(function (message) {
+              document.getElementById(
+                "chatWindow"
+              ).innerHTML += `<div class='wiadomosc'><p class='text'><span class='autor'>${message.nick}</span>${message.wiadomosci}</p></div>`;
+            });
+          })
+          .catch(function (error) {
+            // handle error
+            console.log(error);
+          });
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+      });
+      function wyslij(e) {
+        e.preventDefault();
+        const nick = document.getElementById("nickname").value;
+        const message = document.getElementById("message").value;
+        dane = {
+          nick: nick,
+          wiadomosci: message,
+          czas: new Date().toLocaleString(),
+        };
+        axios
+          .post("http://localhost:3300/add", dane)
+          .then(function (response) {
+            // handle success
+            console.log(response);
+          })
+          .catch(function (error) {
+            // handle error
+            console.log(error);
+          });
+      }
+    </script>
+  </body>
+</html>

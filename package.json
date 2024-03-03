@@ -1,0 +1,25 @@
+{
+  "name": "chatroom-example",
+  "version": "1.0.0",
+  "description": "Prezentacja na lekcję",
+  "main": "server.js",
+  "scripts": {
+    "test": "nodemon server.js",
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shotnik420/chatroom-example.git"
+  },
+  "author": "Szota",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Shotnik420/chatroom-example/issues"
+  },
+  "homepage": "https://github.com/Shotnik420/chatroom-example#readme",
+  "dependencies": {
+    "axios": "^1.6.7",
+    "cors": "^2.8.5",
+    "socket.io": "^4.7.4"
+  }
+}
