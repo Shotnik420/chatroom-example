@@ -19,9 +19,12 @@
         text-align: center;
         font-size: 5vh;
         margin-bottom: 2vh;
-        width: 100%;
-        height: 6vh;
+        width: 60%;
+        color: rgb(100, 100, 100);
+        height: 7vh;
         background-color: rgb(235, 235, 235);
+        border: solid 5px rgb(182, 182, 182);
+        border-radius: 2vh;
       }
       .chat {
         display: flex;
@@ -40,11 +43,30 @@
       }
       .pas {
         display: flex;
-        flex-direction: column;
+        justify-content: space-around;
         align-items: center;
         width: 100%;
         height: 20%;
-        background-color: rgb(161, 161, 161);
+        background-color: rgb(245, 245, 245);
+        border-top: solid 5px rgb(182, 182, 182);
+      }
+      input[type="text"] {
+        width: 20%;
+        height: 30%;
+        border-radius: 1vh;
+        border: none;
+        padding: 1vh;
+        font-size: 3vh;
+        border: solid 5px rgb(182, 182, 182);
+      }
+      textarea {
+        width: 60%;
+        height: 30%;
+        border-radius: 1vh;
+        border: none;
+        padding: 1vh;
+        font-size: 3vh;
+        border: solid 5px rgb(182, 182, 182);
       }
       .autor {
         font-weight: bold;
@@ -56,6 +78,32 @@
         padding: 5px;
         background-color: rgba(255, 255, 255, 0);
       }
+      #sendbutton {
+        background-image: url("https://static-00.iconduck.com/assets.00/send-icon-1024x1011-38wtwa0n.png");
+        width: 5vh;
+        height: 5vh;
+        background-size: 100% 100%;
+        transition: 300ms;
+      }
+      #sendbutton:hover {
+        cursor: pointer;
+        transform: scale(0.9);
+      }
+      #chatWindow::-webkit-scrollbar {
+        width: 12px;
+      }
+
+      #chatWindow::-webkit-scrollbar-track {
+        border-radius: 8px;
+        background-color: #e7e7e7;
+        border: 1px solid #cacaca;
+        box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+      }
+
+      #chatWindow::-webkit-scrollbar-thumb {
+        border-radius: 8px;
+        background-color: #363636;
+      }
     </style>
   </head>
   <body>
@@ -66,19 +114,18 @@
     ></script>
 
     <div class="chat">
-      1
       <h1>Mechanik Czat</h1>
       <div id="chatWindow"></div>
       <div class="pas">
-        <input type="text" id="nickname" placeholder="Enter your nickname" />
-        <input type="text" id="message" placeholder="Enter your message" />
-        <button
-          type="button"
-          id="sendButton"
-          onclick="wyslij(event); return false"
-        >
-          Send
-        </button>
+        <input
+          maxlength="15"
+          type="text"
+          id="nickname"
+          placeholder="Wpisz Nick"
+        />
+        <textarea type="text" id="message"> </textarea>
+
+        <div onclick="wyslij(event); return false" id="sendbutton"></div>
       </div>
     </div>
     <script>
@@ -119,11 +166,18 @@
         e.preventDefault();
         const nick = document.getElementById("nickname").value;
         const message = document.getElementById("message").value;
+
+        if (!nick.trim() || !message.trim()) {
+          alert("Proszę wpisać nick i tekst do czatu.");
+          return;
+        }
+
         dane = {
           nick: nick,
           wiadomosci: message,
           czas: new Date().toLocaleString(),
         };
+
         axios
           .post("http://localhost:3300/add", dane)
           .then(function (response) {
@@ -135,6 +189,17 @@
             console.log(error);
           });
       }
+      window.onload = function () {
+        const textarea = document.querySelector("textarea");
+
+        textarea.addEventListener("keydown", function (e) {
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            console.log("wysylam");
+            wyslij(event);
+          }
+        });
+      };
     </script>
   </body>
 </html>
